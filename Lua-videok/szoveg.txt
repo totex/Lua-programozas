@@ -1,0 +1,2 @@
+Ezt a szöveget beleírjuk a szoveg.txt fájlba "write" módban.
+Ezt a szöveget is beleírjuk a fájlba, "a" azaz append módban.
