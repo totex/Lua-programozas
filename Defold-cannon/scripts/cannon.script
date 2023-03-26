@@ -1,0 +1,67 @@
+function init(self)
+	msg.post(".", "acquire_input_focus")
+	go.set_position(vmath.vector3(500, 500, 0))
+	mpos_vec = vmath.vector3()
+	color = vmath.vector4(1, 1, 0, 1)
+	shoot_rate = 2
+end
+
+function in_range(radius, mpos)
+	local pos = go.get_position()
+	--local dist = ((pos.x - mpos.x)^2 + (pos.y - mpos.y)^2) ^ 0.5
+	local dist = math.sqrt(((pos.x - mpos.x)^2 + (pos.y - mpos.y)^2))
+	return dist <= radius
+end
+
+-- function rotate_immediately(mpos)
+-- 	local pos = go.get_position()
+-- 	local angle = math.atan2(mpos.y - pos.y, mpos.x - pos.x)
+-- 	local rot = vmath.quat_rotation_z(angle)
+-- 	go.set_rotation(rot) --sets the rotation immediately
+-- end
+
+function rotate(mpos)
+	local pos = go.get_position()
+	local angle = math.atan2(mpos.y - pos.y, mpos.x - pos.x)
+
+	local startrot = vmath.normalize(go.get_rotation())
+	local endrot = vmath.quat_rotation_z(angle)
+	local rot = vmath.slerp(0.08, startrot, endrot)
+
+	go.set_rotation(rot)
+end
+
+function fire()
+	factory.create("laserFactory#factory", go.get_position())
+	sound.play("cannon#sound")
+end
+
+
+function update(self, dt)
+	--detection range
+	if in_range(400, mpos_vec) then
+		rotate(mpos_vec)
+		color.y = 1
+
+		--shoot range
+		if in_range(300, mpos_vec) then
+			shoot_rate = shoot_rate - 0.1
+			color.y = 0
+			if shoot_rate < 0 then
+				fire()
+				shoot_rate = 2
+			end
+		end
+		
+
+		msg.post("@render:", "draw_line", { start_point=go.get_position(), end_point=mpos_vec, color=color })
+	end
+	
+end
+
+
+function on_input(self, action_id, action)
+	mpos_vec.x = action.x
+	mpos_vec.y = action.y
+end
+
