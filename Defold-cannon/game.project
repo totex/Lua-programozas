@@ -1,0 +1,16 @@
+[bootstrap]
+main_collection = /main/main.collectionc
+
+[script]
+shared_state = 1
+
+[display]
+width = 1000
+height = 1000
+
+[android]
+input_method = HiddenInputField
+
+[project]
+title = Cannon
+
